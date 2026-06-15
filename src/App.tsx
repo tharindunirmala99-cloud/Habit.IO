@@ -20,7 +20,7 @@ import {
 
 import { trackerService } from './lib/trackerService';
 import { getHabitsWithAnalytics } from './lib/analytics';
-import { isSupabaseConfigured } from './lib/supabase';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
 import { Habit, HabitLog, HabitWithAnalytics, HabitCategory, LogStatus, TrackerUser } from './types';
 
 import AuthScreen from './components/AuthScreen';
@@ -60,7 +60,7 @@ export default function App() {
   // Week days array
   const weekDays = getWeekDays();
 
-  // Load user session on startup
+  // Load user session on startup and subscribe to Supabase auth state changes
   useEffect(() => {
     async function loadSession() {
       try {
@@ -75,6 +75,23 @@ export default function App() {
       }
     }
     loadSession();
+
+    // Keep session in sync with Supabase auth state (handles token refresh, sign-out, etc.)
+    if (isSupabaseConfigured && supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+        if (event === 'SIGNED_OUT' || !session) {
+          setCurrentUser(null);
+          setLoading(false);
+          return;
+        }
+        if (session) {
+          const user = await trackerService.getCurrentUser();
+          if (user) setCurrentUser(user);
+          setLoading(false);
+        }
+      });
+      return () => subscription.unsubscribe();
+    }
   }, []);
 
   // Fetch User's habits and logs whenever currentUser changes

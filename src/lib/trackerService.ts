@@ -126,12 +126,13 @@ export const trackerService = {
     }
   },
 
-  async signUp(email: string, password: string, username: string): Promise<TrackerUser> {
+  async signUp(email: string, password: string, username: string): Promise<{ user: TrackerUser; requiresConfirmation: boolean }> {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: window.location.origin,
           data: {
             username
           }
@@ -140,18 +141,19 @@ export const trackerService = {
       if (error) throw error;
       if (!data.user) throw new Error('User creation failed.');
 
-      // The trigger 'on_auth_user_created' on Supabase handles writing the Row to public.profiles.
-      // But just in case, we return the parsed credentials
       return {
-        id: data.user.id,
-        email: data.user.email || email,
-        username: username
+        user: {
+          id: data.user.id,
+          email: data.user.email || email,
+          username: username
+        },
+        requiresConfirmation: !data.session
       };
     } else {
       const userId = 'local-user-' + Math.random().toString(36).substring(2, 9);
       const newUser: TrackerUser = { id: userId, email, username };
       localStorage.setItem('habits_tracker_user', JSON.stringify(newUser));
-      return newUser;
+      return { user: newUser, requiresConfirmation: false };
     }
   },
 
@@ -214,6 +216,19 @@ export const trackerService = {
     }
   },
 
+  async resendConfirmationEmail(email: string): Promise<void> {
+    if (isSupabaseConfigured && supabase) {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    }
+  },
+
   async signOut(): Promise<void> {
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
@@ -243,13 +258,13 @@ export const trackerService = {
 
   async createHabit(name: string, description: string, category: HabitCategory): Promise<Habit> {
     if (isSupabaseConfigured && supabase) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Unauthenticated user cannot create habits.');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Unauthenticated user cannot create habits.');
 
       const { data, error } = await supabase
         .from('habits')
         .insert({
-          user_id: user.id,
+          user_id: session.user.id,
           name,
           description,
           category,
