@@ -43,13 +43,9 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
         const user = await trackerService.signIn(email, password);
         onSuccess(user);
       } else {
-        const user = await trackerService.signUp(email, password, username);
-        if (isSupabaseConfigured) {
-          setSuccessMsg('Sign up successful! Please check your email inbox for Supabase verification.');
-          // Log them in anyway or wait
-          setTimeout(() => {
-            onSuccess(user);
-          }, 3000);
+        const { user, requiresConfirmation } = await trackerService.signUp(email, password, username);
+        if (requiresConfirmation) {
+          setSuccessMsg('Account created! Check your email inbox for a verification link, then come back to sign in.');
         } else {
           onSuccess(user);
         }

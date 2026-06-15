@@ -126,12 +126,13 @@ export const trackerService = {
     }
   },
 
-  async signUp(email: string, password: string, username: string): Promise<TrackerUser> {
+  async signUp(email: string, password: string, username: string): Promise<{ user: TrackerUser; requiresConfirmation: boolean }> {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: window.location.origin,
           data: {
             username
           }
@@ -140,18 +141,19 @@ export const trackerService = {
       if (error) throw error;
       if (!data.user) throw new Error('User creation failed.');
 
-      // The trigger 'on_auth_user_created' on Supabase handles writing the Row to public.profiles.
-      // But just in case, we return the parsed credentials
       return {
-        id: data.user.id,
-        email: data.user.email || email,
-        username: username
+        user: {
+          id: data.user.id,
+          email: data.user.email || email,
+          username: username
+        },
+        requiresConfirmation: !data.session
       };
     } else {
       const userId = 'local-user-' + Math.random().toString(36).substring(2, 9);
       const newUser: TrackerUser = { id: userId, email, username };
       localStorage.setItem('habits_tracker_user', JSON.stringify(newUser));
-      return newUser;
+      return { user: newUser, requiresConfirmation: false };
     }
   },
 
