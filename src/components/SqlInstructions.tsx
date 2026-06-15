@@ -87,7 +87,7 @@ export default function SqlInstructions() {
 
   return (
     <div id="sql-instructions-container" className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm p-6 overflow-hidden">
-      <div className="flex items-start justify-between mb-4 pb-4 border-b border-zinc-850">
+      <div className="flex items-start justify-between mb-4 pb-4 border-b border-zinc-805">
         <div>
           <div className="flex items-center gap-2">
             <span className="p-2 bg-indigo-950/35 text-indigo-400 rounded-lg">
@@ -119,7 +119,7 @@ export default function SqlInstructions() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
-        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-850/80 text-xs text-zinc-400 font-sans">
+        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800/80 text-xs text-zinc-400 font-sans">
           <div className="flex items-center gap-1.5 font-semibold text-zinc-200 mb-1">
             <Key className="w-3.5 h-3.5 text-indigo-400" />
             <span>1. Create Schema</span>
@@ -127,7 +127,7 @@ export default function SqlInstructions() {
           Open the SQL Editor inside your Supabase project dashboard, paste this script, and click "Run".
         </div>
 
-        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-850/80 text-xs text-zinc-400 font-sans">
+        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800/80 text-xs text-zinc-400 font-sans">
           <div className="flex items-center gap-1.5 font-semibold text-zinc-200 mb-1">
             <Shield className="w-3.5 h-3.5 text-indigo-400" />
             <span>2. Security & RLS</span>
@@ -135,7 +135,7 @@ export default function SqlInstructions() {
           All user policies are pre-configured to lock data access. Users only read/edit their personal records.
         </div>
 
-        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-850/80 text-xs text-zinc-400 font-sans">
+        <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800/80 text-xs text-zinc-400 font-sans">
           <div className="flex items-center gap-1.5 font-semibold text-zinc-200 mb-1">
             <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
             <span>3. Automations</span>
@@ -145,7 +145,7 @@ export default function SqlInstructions() {
       </div>
 
       <div className="relative">
-        <pre className="text-[10px] sm:text-xs font-mono text-zinc-3 w-full bg-zinc-950 rounded-xl p-4 overflow-x-auto max-h-[220px] scrollbar-thin scrollbar-thumb-zinc-800">
+        <pre className="text-[10px] sm:text-xs font-mono text-zinc-300 w-full bg-zinc-950 rounded-xl p-4 overflow-x-auto max-h-[220px] scrollbar-thin scrollbar-thumb-zinc-800">
           <code>{SQL_SCHEMA_CODE}</code>
         </pre>
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-zinc-950 to-transparent pointer-events-none rounded-b-xl" />

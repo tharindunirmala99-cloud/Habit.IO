@@ -80,7 +80,7 @@ export default function HabitCard({
       case 'failed':
         return 'bg-rose-950/30 hover:bg-rose-900/40 text-rose-400 border-rose-900/40';
       default:
-        return 'bg-zinc-905 hover:bg-zinc-800 text-zinc-600 border-zinc-800 hover:border-zinc-700 border-dashed';
+        return 'bg-zinc-900 hover:bg-zinc-800 text-zinc-600 border-zinc-800 hover:border-zinc-700 border-dashed';
     }
   };
 
@@ -91,7 +91,7 @@ export default function HabitCard({
   };
 
   return (
-    <div id={`habit-card-${habit.id}`} className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm overflow-visible hover:border-zinc-705 transition-all p-5 flex flex-col md:flex-row gap-5">
+    <div id={`habit-card-${habit.id}`} className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm overflow-visible hover:border-zinc-700 transition-all p-5 flex flex-col md:flex-row gap-5">
       {/* Habit Info & Streaks Section (Left in Desktop) */}
       <div className="flex-1 min-w-0 flex flex-col justify-between">
         <div>
@@ -140,7 +140,7 @@ export default function HabitCard({
                         }
                         setShowActions(false);
                       }}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-rose-450 hover:bg-zinc-805 transition-colors text-left"
+                      className="w-full flex items-center gap-2 px-3 py-2 text-rose-500 hover:bg-zinc-805 transition-colors text-left"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                       <span>Delete</span>
@@ -187,7 +187,7 @@ export default function HabitCard({
         </div>
 
         {/* Calendar Day grid */}
-        <div className="grid grid-cols-7 gap-1.5 bg-zinc-950 border border-zinc-850 rounded-2xl p-2.5">
+        <div className="grid grid-cols-7 gap-1.5 bg-zinc-950 border border-zinc-800 rounded-2xl p-2.5">
           {weekDays.map((day, idx) => {
             const dateStr = formatDateStr(day);
             const status = habit.logs[dateStr];

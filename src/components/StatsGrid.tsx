@@ -44,7 +44,7 @@ export default function StatsGrid({ habits }: StatsGridProps) {
       {/* Total Aggregates Matrix */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Streak Bento */}
-        <div className="bg-[#121214] rounded-2xl border border-zinc-805 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
+        <div className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
           <div className="flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-zinc-400">Longest Streak</span>
             <span className="p-1.5 sm:p-2 bg-orange-950/30 text-orange-400 rounded-xl">
@@ -60,7 +60,7 @@ export default function StatsGrid({ habits }: StatsGridProps) {
         </div>
 
         {/* Completion Rate Bento */}
-        <div className="bg-[#121214] rounded-2xl border border-zinc-805 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
+        <div className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
           <div className="flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-zinc-400">Avg Completion</span>
             <span className="p-1.5 sm:p-2 bg-indigo-950/40 text-indigo-400 rounded-xl">
@@ -81,7 +81,7 @@ export default function StatsGrid({ habits }: StatsGridProps) {
         </div>
 
         {/* Active Habits Bento */}
-        <div className="bg-[#121214] rounded-2xl border border-zinc-805 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
+        <div className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
           <div className="flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-zinc-400">Total Habits</span>
             <span className="p-1.5 sm:p-2 bg-emerald-950/30 text-emerald-400 rounded-xl">
@@ -97,7 +97,7 @@ export default function StatsGrid({ habits }: StatsGridProps) {
         </div>
 
         {/* Total Actions Bento */}
-        <div className="bg-[#121214] rounded-2xl border border-zinc-805 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
+        <div className="bg-[#121214] rounded-2xl border border-zinc-800 shadow-sm p-4 sm:p-5 flex flex-col justify-between hover:scale-[1.01] transition-transform">
           <div className="flex items-center justify-between">
             <span className="text-xs sm:text-sm font-semibold text-zinc-400">Total Logs</span>
             <span className="p-1.5 sm:p-2 bg-amber-950/30 text-amber-400 rounded-xl">

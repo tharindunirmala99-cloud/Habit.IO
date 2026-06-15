@@ -58,7 +58,7 @@ export default function HabitModal({ habitToEdit, onSave, onClose }: HabitModalP
         className="bg-[#121214] rounded-3xl border border-zinc-800 shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-zinc-50"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-850">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-800">
           <h3 className="text-lg font-bold text-zinc-100 font-display">
             {habitToEdit ? 'Edit Habit Settings' : 'Create New Habit'}
           </h3>
@@ -135,7 +135,7 @@ export default function HabitModal({ habitToEdit, onSave, onClose }: HabitModalP
           </div>
 
           {/* Submit Action footer buttons */}
-          <div className="pt-4 flex items-center justify-end gap-3 border-t border-zinc-850">
+          <div className="pt-4 flex items-center justify-end gap-3 border-t border-zinc-800">
             <button
               id="btn-cancel-modal"
               type="button"

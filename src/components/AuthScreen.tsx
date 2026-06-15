@@ -87,7 +87,7 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
 
   return (
     <div id="auth-screen-layout" className="min-h-[82vh] flex items-center justify-center p-4">
-      <div id="auth-box-container" className="w-full max-w-md bg-[#121214] border border-zinc-805 shadow-2xl rounded-3xl overflow-hidden p-6 sm:p-8 space-y-6">
+      <div id="auth-box-container" className="w-full max-w-md bg-[#121214] border border-zinc-800 shadow-2xl rounded-3xl overflow-hidden p-6 sm:p-8 space-y-6">
         
         {/* Connection Type Indicator Badge */}
         <div className="flex justify-center font-mono text-xs">
@@ -122,7 +122,7 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
         </div>
 
         {/* Tab Buttons Selection */}
-        <div className="flex bg-zinc-950 border border-zinc-850 rounded-xl p-1">
+        <div className="flex bg-zinc-950 border border-zinc-800 rounded-xl p-1">
           <button
             id="tab-select-login"
             onClick={() => {

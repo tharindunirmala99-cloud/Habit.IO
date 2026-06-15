@@ -289,7 +289,7 @@ export default function App() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 space-y-6">
         
         {/* Mobile Navigation bar tab switches */}
-        <div className="flex sm:hidden items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-805 w-full">
+        <div className="flex sm:hidden items-center gap-1 bg-zinc-950 p-1 rounded-xl border border-zinc-800 w-full">
           <button
             id="mobile-nav-dashboard"
             onClick={() => setActiveView('dashboard')}
