@@ -243,13 +243,13 @@ export const trackerService = {
 
   async createHabit(name: string, description: string, category: HabitCategory): Promise<Habit> {
     if (isSupabaseConfigured && supabase) {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Unauthenticated user cannot create habits.');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('Unauthenticated user cannot create habits.');
 
       const { data, error } = await supabase
         .from('habits')
         .insert({
-          user_id: user.id,
+          user_id: session.user.id,
           name,
           description,
           category,
