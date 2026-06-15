@@ -1,0 +1,6 @@
+{
+  "name": "Daily Habits Tracker",
+  "description": "A high-performance daily habits tracker featuring secure profiles, custom category grouping, active and historical streaks analytics, and responsive card-style calendar logs.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
