@@ -251,18 +251,7 @@ export default function App() {
               <BarChart3 className="w-3.5 h-3.5" />
               <span>Analytics & Metrics</span>
             </button>
-            <button
-              id="nav-btn-database"
-              onClick={() => setActiveView('database')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${
-                activeView === 'database' 
-                  ? 'bg-zinc-900 text-zinc-50 border border-zinc-800 shadow-sm' 
-                  : 'text-zinc-400 hover:text-zinc-200'
-              }`}
-            >
-              <Database className="w-3.5 h-3.5" />
-              <span>Supabase Setup</span>
-            </button>
+
           </nav>
 
           {/* Connected User Profile Controls & Sign out */}
@@ -322,29 +311,6 @@ export default function App() {
           </button>
         </div>
 
-        {/* Dynamic Sandbox/Sync Notification Box banner */}
-        {!isSupabaseConfigured && (
-          <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-orange-500/20 text-orange-200 rounded-2xl p-4 sm:p-5 shadow-md flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="p-1.5 bg-orange-500/20 rounded-lg text-orange-400">
-                  <Database className="w-4 h-4" />
-                </span>
-                <h4 className="font-bold text-xs sm:text-sm tracking-tight text-zinc-100 font-display">Running in Isolated Sandbox Demo Mode</h4>
-              </div>
-              <p className="text-xxs sm:text-xs text-zinc-400 max-w-2xl leading-relaxed">
-                Habits and Logs are securely cached in client-side storage for rich preview capability! To upgrade this to full multi-device database synchronization, consult the <strong>Supabase Setup</strong> tab.
-              </p>
-            </div>
-            <button
-              id="btn-goto-supabase-setup"
-              onClick={() => setActiveView('database')}
-              className="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-xl shadow-sm transition-all text-center self-start sm:self-center"
-            >
-              Get SQL Schema & Config
-            </button>
-          </div>
-        )}
 
         {/* Action Header bar: Title, Current streak display, + Add habit button */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-zinc-800/80">
