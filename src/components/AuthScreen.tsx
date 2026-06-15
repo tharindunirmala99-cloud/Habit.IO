@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { Mail, Lock, User, Sparkles, Database, ShieldAlert, ArrowRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, Lock, User, Sparkles, Database, ShieldAlert, ArrowRight, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
 import { trackerService } from '../lib/trackerService';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { TrackerUser } from '../types';
@@ -22,6 +22,15 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [pendingEmail, setPendingEmail] = useState('');
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendMsg, setResendMsg] = useState('');
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setTimeout(() => setResendCooldown(c => c - 1), 1000);
+    return () => clearTimeout(timer);
+  }, [resendCooldown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,7 +54,9 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
       } else {
         const { user, requiresConfirmation } = await trackerService.signUp(email, password, username);
         if (requiresConfirmation) {
-          setSuccessMsg('Account created! Check your email inbox for a verification link, then come back to sign in.');
+          setPendingEmail(email);
+          setResendCooldown(60);
+          setSuccessMsg('Account created! Check your email inbox (and spam folder) for a verification link, then come back to sign in.');
         } else {
           onSuccess(user);
         }
@@ -54,6 +65,18 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
       setError(err?.message || 'Authentication failed. Please verify credentials.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!pendingEmail || resendCooldown > 0) return;
+    setResendMsg('');
+    try {
+      await trackerService.resendConfirmationEmail(pendingEmail);
+      setResendMsg('Email resent! Check your inbox and spam folder.');
+      setResendCooldown(60);
+    } catch (err: any) {
+      setResendMsg(err?.message || 'Failed to resend. Please try again shortly.');
     }
   };
 
@@ -157,10 +180,35 @@ export default function AuthScreen({ onSuccess }: AuthScreenProps) {
           </div>
         )}
 
-        {successMsg && (
+        {successMsg && !pendingEmail && (
           <div className="p-3 bg-emerald-950/20 border border-emerald-900/40 text-emerald-400 text-xs font-semibold rounded-xl flex items-center gap-2">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>{successMsg}</span>
+          </div>
+        )}
+
+        {successMsg && pendingEmail && (
+          <div className="p-4 bg-indigo-950/20 border border-indigo-900/40 text-indigo-300 text-xs rounded-xl space-y-3">
+            <div className="flex items-start gap-2">
+              <CheckCircle2 className="w-4 h-4 text-indigo-400 shrink-0 mt-0.5" />
+              <p className="font-semibold leading-relaxed">{successMsg}</p>
+            </div>
+            <div className="flex items-start gap-2 text-indigo-300/75">
+              <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-400" />
+              <p>If you don't see it after a minute, check your <strong className="text-amber-300">spam / junk folder</strong> — confirmation emails sometimes land there.</p>
+            </div>
+            {resendMsg && (
+              <p className="text-[10px] font-semibold text-emerald-400">{resendMsg}</p>
+            )}
+            <button
+              type="button"
+              onClick={handleResend}
+              disabled={resendCooldown > 0}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-900/40 hover:bg-indigo-900/60 border border-indigo-800/50 text-indigo-300 font-bold text-[10px] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <RefreshCw className="w-3 h-3" />
+              {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : 'Resend confirmation email'}
+            </button>
           </div>
         )}
 

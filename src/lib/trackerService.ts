@@ -216,6 +216,19 @@ export const trackerService = {
     }
   },
 
+  async resendConfirmationEmail(email: string): Promise<void> {
+    if (isSupabaseConfigured && supabase) {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: {
+          emailRedirectTo: window.location.origin
+        }
+      });
+      if (error) throw error;
+    }
+  },
+
   async signOut(): Promise<void> {
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
