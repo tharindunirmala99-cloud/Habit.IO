@@ -6,82 +6,18 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import { Habit, HabitLog, HabitCategory, LogStatus, TrackerUser } from '../types';
 
-// Let's seed initial realistic demo data for the Local sandbox
-const DEMO_HABITS: Habit[] = [
-  {
-    id: 'demo-habit-1',
-    user_id: 'demo-user-id',
-    name: 'Morning Mindfulness',
-    description: '10 minutes of deep breathing and presence before starting work.',
-    category: 'Mind',
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: 'demo-habit-2',
-    user_id: 'demo-user-id',
-    name: 'Daily Workout',
-    description: '30-minute high intensity workout or weights session.',
-    category: 'Health',
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: 'demo-habit-3',
-    user_id: 'demo-user-id',
-    name: 'Read Technical Docs',
-    description: 'Learn new tech stack concepts and system capabilities.',
-    category: 'Work',
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  },
-  {
-    id: 'demo-habit-4',
-    user_id: 'demo-user-id',
-    name: 'Track Spending',
-    description: 'Log daily expenses to maintain strict budget goals.',
-    category: 'Finance',
-    created_at: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
-  }
-];
+// Demo data for Local Sandbox Mode
 
-// Seed realistic completions for the past 7 days to showcase beautiful chart/calendar completion states
+
 const getPastDateStr = (daysAgo: number): string => {
   const d = new Date();
   d.setDate(d.getDate() - daysAgo);
   return d.toISOString().split('T')[0];
 };
 
-const DEMO_LOGS: HabitLog[] = [
-  // Mindfulness (Mind)
-  { id: 'l1', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(6) },
-  { id: 'l2', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(5) },
-  { id: 'l3', habit_id: 'demo-habit-1', status: 'skipped',   date: getPastDateStr(4) },
-  { id: 'l4', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(3) },
-  { id: 'l5', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(2) },
-  { id: 'l6', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(1) },
-  { id: 'l7', habit_id: 'demo-habit-1', status: 'completed', date: getPastDateStr(0) }, // Active streak of 4 (skipped splits streak, or does it? standard is consecutive completions or allowed skip. We'll count completed)
-
-  // Gym Workout (Health)
-  { id: 'l8',  habit_id: 'demo-habit-2', status: 'completed', date: getPastDateStr(6) },
-  { id: 'l9',  habit_id: 'demo-habit-2', status: 'failed',    date: getPastDateStr(5) },
-  { id: 'l10', habit_id: 'demo-habit-2', status: 'completed', date: getPastDateStr(4) },
-  { id: 'l11', habit_id: 'demo-habit-2', status: 'completed', date: getPastDateStr(3) },
-  { id: 'l12', habit_id: 'demo-habit-2', status: 'failed',    date: getPastDateStr(2) },
-  { id: 'l13', habit_id: 'demo-habit-2', status: 'completed', date: getPastDateStr(1) },
-
-  // Read Docs (Work)
-  { id: 'l14', habit_id: 'demo-habit-3', status: 'skipped',   date: getPastDateStr(6) },
-  { id: 'l15', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(5) },
-  { id: 'l16', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(4) },
-  { id: 'l17', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(3) },
-  { id: 'l18', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(2) },
-  { id: 'l19', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(1) },
-  { id: 'l20', habit_id: 'demo-habit-3', status: 'completed', date: getPastDateStr(0) } // Active streak of 6
-];
-
-// Helper to check and initialize standard LocalStorage
 const initializeLocalStorage = () => {
   if (typeof window === 'undefined') return;
   if (!localStorage.getItem('habits_tracker_user')) {
-    // Standard mock user
     const defaultUser: TrackerUser = {
       id: 'demo-user-id',
       email: 'pioneer@habits.io',
@@ -89,26 +25,22 @@ const initializeLocalStorage = () => {
     };
     localStorage.setItem('habits_tracker_user', JSON.stringify(defaultUser));
   }
-  if (!localStorage.getItem('habits_tracker_habits')) {
-    localStorage.setItem('habits_tracker_habits', JSON.stringify(DEMO_HABITS));
-  }
-  if (!localStorage.getItem('habits_tracker_logs')) {
-    localStorage.setItem('habits_tracker_logs', JSON.stringify(DEMO_LOGS));
-  }
+  // if (!localStorage.getItem('habits_tracker_habits')) {
+  //   localStorage.setItem('habits_tracker_habits', JSON.stringify(DEMO_HABITS));
+  // }
+  // if (!localStorage.getItem('habits_tracker_logs')) {
+  //   localStorage.setItem('habits_tracker_logs', JSON.stringify(DEMO_LOGS));
+  // }
 };
 
 initializeLocalStorage();
 
 export const trackerService = {
-  // -------------------------------------------------------------
-  // USER / AUTH SERVICE
-  // -------------------------------------------------------------
   async getCurrentUser(): Promise<TrackerUser | null> {
     if (isSupabaseConfigured && supabase) {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error || !session) return null;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return null;
 
-      // Fetch Profile username
       const { data: profile } = await supabase
         .from('profiles')
         .select('username')
@@ -118,7 +50,8 @@ export const trackerService = {
       return {
         id: session.user.id,
         email: session.user.email || '',
-        username: profile?.username || session.user.email?.split('@')[0] || 'User'
+        username: profile?.username || session.user.user_metadata?.username || 'User',
+        email_confirmed_at: session.user.email_confirmed_at
       };
     } else {
       const userStr = localStorage.getItem('habits_tracker_user');
@@ -127,27 +60,33 @@ export const trackerService = {
   },
 
   async signUp(email: string, password: string, username: string): Promise<TrackerUser> {
+    console.log('[trackerService] signUp called for:', email);
+
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            username
-          }
+          data: { username },
+          emailRedirectTo: `${window.location.origin}`,
         }
       });
-      if (error) throw error;
-      if (!data.user) throw new Error('User creation failed.');
 
-      // The trigger 'on_auth_user_created' on Supabase handles writing the Row to public.profiles.
-      // But just in case, we return the parsed credentials
+      if (error) {
+        if (error.message.includes('already registered')) {
+          throw new Error('This email is already registered. Please sign in instead.');
+        }
+        throw error;
+      }
+
       return {
-        id: data.user.id,
-        email: data.user.email || email,
-        username: username
+        id: data.user!.id,
+        email: data.user!.email || email,
+        username,
+        email_confirmed_at: data.user!.email_confirmed_at
       };
     } else {
+      // Local mode
       const userId = 'local-user-' + Math.random().toString(36).substring(2, 9);
       const newUser: TrackerUser = { id: userId, email, username };
       localStorage.setItem('habits_tracker_user', JSON.stringify(newUser));
@@ -156,13 +95,21 @@ export const trackerService = {
   },
 
   async signIn(email: string, password: string): Promise<TrackerUser> {
+    console.log('[trackerService] signIn called for:', email);
+
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+
       if (error) throw error;
       if (!data.user) throw new Error('Login failed.');
+
+      // STRICT EMAIL VERIFICATION CHECK
+      if (!data.user.email_confirmed_at) {
+        throw new Error('Please verify your email address first. Check your inbox (and spam folder).');
+      }
 
       const { data: profile } = await supabase
         .from('profiles')
@@ -173,15 +120,11 @@ export const trackerService = {
       return {
         id: data.user.id,
         email: data.user.email || '',
-        username: profile?.username || data.user.email?.split('@')[0] || 'User'
+        username: profile?.username || data.user.user_metadata?.username || 'User',
+        email_confirmed_at: data.user.email_confirmed_at
       };
     } else {
-      // Mock log in
-      const current = localStorage.getItem('habits_tracker_user');
-      if (current) {
-        const parsed = JSON.parse(current);
-        if (parsed.email === email) return parsed;
-      }
+      // Local sandbox - always allow
       const demoUser: TrackerUser = {
         id: 'demo-user-id',
         email,
@@ -196,14 +139,11 @@ export const trackerService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-          redirectTo: window.location.origin
-        }
+        options: { redirectTo: window.location.origin }
       });
       if (error) return { error };
       return { url: data.url };
     } else {
-      // Direct mock login for standard live sandbox flow
       const demoUser: TrackerUser = {
         id: 'demo-google-id',
         email: 'google.explorer@domain.com',
@@ -224,9 +164,7 @@ export const trackerService = {
     }
   },
 
-  // -------------------------------------------------------------
-  // HABITS SERVICE
-  // -------------------------------------------------------------
+  // HABITS
   async getHabits(): Promise<Habit[]> {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
@@ -313,21 +251,17 @@ export const trackerService = {
         .eq('id', habitId);
       if (error) throw error;
     } else {
-      // Delete habit
       const habitsStr = localStorage.getItem('habits_tracker_habits');
       const habits: Habit[] = habitsStr ? JSON.parse(habitsStr) : [];
       localStorage.setItem('habits_tracker_habits', JSON.stringify(habits.filter(h => h.id !== habitId)));
 
-      // Delete cascade logs
       const logsStr = localStorage.getItem('habits_tracker_logs');
       const logs: HabitLog[] = logsStr ? JSON.parse(logsStr) : [];
       localStorage.setItem('habits_tracker_logs', JSON.stringify(logs.filter(l => l.habit_id !== habitId)));
     }
   },
 
-  // -------------------------------------------------------------
-  // HABIT LOGS SERVICE
-  // -------------------------------------------------------------
+  // HABIT LOGS
   async getLogs(habitIds: string[]): Promise<HabitLog[]> {
     if (isSupabaseConfigured && supabase) {
       if (habitIds.length === 0) return [];
@@ -346,33 +280,27 @@ export const trackerService = {
 
   async saveLog(habitId: string, status: LogStatus, dateStr: string): Promise<HabitLog> {
     if (isSupabaseConfigured && supabase) {
-      // Try to upsert row. Supabase uses ON CONFLICT (habit_id, date) DO UPDATE based on our schema model.
       const { data, error } = await supabase
         .from('habit_logs')
         .upsert(
-          {
-            habit_id: habitId,
-            status,
-            date: dateStr
-          },
+          { habit_id: habitId, status, date: dateStr },
           { onConflict: 'habit_id,date' }
         )
         .select()
         .single();
+
       if (error) {
-        // If single() is fussy about matching rows or returning, fallback to raw select or re-query
-        const selectQuery = await supabase
+        const { data: fallback } = await supabase
           .from('habit_logs')
           .select('*')
           .eq('habit_id', habitId)
           .eq('date', dateStr)
           .maybeSingle();
-        if (selectQuery.data) return selectQuery.data as HabitLog;
+        if (fallback) return fallback as HabitLog;
         throw error;
       }
       return data as HabitLog;
     } else {
-      // Mock local storage upsert
       const logsStr = localStorage.getItem('habits_tracker_logs');
       const logs: HabitLog[] = logsStr ? JSON.parse(logsStr) : [];
 

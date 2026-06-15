@@ -41,3 +41,7 @@ export interface TrackerUser {
   email: string;
   username: string;
 }
+
+export interface TrackerUser {
+  email_confirmed_at?: string | null;   // ← Add this
+}
